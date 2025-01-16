@@ -9,7 +9,7 @@ require("dotenv").config();
 // Path to your Google Service Account JSON key file
 const KEYFILEPATH = path.join(__dirname, "service-account.json");
 const SCOPES = ["https://www.googleapis.com/auth/spreadsheets.readonly"];
-const SPREADSHEET_ID = "1K8tJDTw_K7M_1tuwf3edzjH9XwQzr3L9lqzEvOl-t3M";
+const SPREADSHEET_ID = process.env.SPREADSHEET_ID;
 const RANGE = "Página1!A:F"; // Adjust the range to match your sheet
 
 async function readSheet() {
