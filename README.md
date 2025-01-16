@@ -1,25 +1,39 @@
 # Email Sender Script
 
-This project is a Node.js application that reads email addresses from a Google Sheet and sends emails using the Gmail service. The script retrieves emails from column J of the sheet and uses `nodemailer` to handle email delivery.
+## Running the Script
 
-## Prerequisites
+1. **Clone the Repository:**
+    ```bash
+    git clone <repository-url>
+    cd <project-folder>
+    ```
 
-Ensure you have the following installed:
-- **Node.js** (v14 or higher)
-- **npm** (Node Package Manager)
+2. **Install Dependencies:**
+    ```bash
+    npm install
+    ```
 
-## Setup Instructions
+3. **Create `.env` File:**
+    In the root directory, create a file named `.env` with the following content:
+    ```env
+    GMAIL_USER=your_email@gmail.com
+    GMAIL_PASS=your_app_password
+    ```
+    - Replace `your_email@gmail.com` with your Gmail address.
+    - Replace `your_app_password` with your Gmail app password (refer to [Google’s guide](https://support.google.com/accounts/answer/185833?hl=en) to create one).
 
-### 1. Clone the Repository
-```bash
-git clone <repository-url>
-cd <project-folder>
+4. **Add Google Service Account Key:**
+    - Place the JSON key file for your Google Service Account in the project directory. Name it `service-account.json`.
 
-### 2. Install Dependencies
-Run the following command to install the required npm packages:
+5. **Edit Google Sheet Details in `app.js`:**
+    Update the following constants:
+    ```javascript
+    const SPREADSHEET_ID = 'your_spreadsheet_id';
+    const RANGE = 'Página1!A:J';
+    ```
 
-```bash
-npm install
-
-
-
+6. **Run the Script:**
+    ```bash
+    node app.js
+    ```
+    - This will send emails to the addresses found in column J of the Google Sheet.
