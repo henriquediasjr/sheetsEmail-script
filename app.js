@@ -10,7 +10,7 @@ require("dotenv").config();
 const KEYFILEPATH = path.join(__dirname, "service-account.json");
 const SCOPES = ["https://www.googleapis.com/auth/spreadsheets.readonly"];
 const SPREADSHEET_ID = "1K8tJDTw_K7M_1tuwf3edzjH9XwQzr3L9lqzEvOl-t3M";
-const RANGE = "Página1!A:G"; // Adjust the range to match your sheet
+const RANGE = "Página1!A:F"; // Adjust the range to match your sheet
 
 async function readSheet() {
     const auth = new google.auth.GoogleAuth({
@@ -31,7 +31,7 @@ async function readSheet() {
     }
 
     // Skip the header row and extract emails from column G (index 6)
-    return rows.slice(1).map(row => row[6]).filter(email => email);
+    return rows.slice(1).map(row => row[5]).filter(email => email);
 }
 
 
