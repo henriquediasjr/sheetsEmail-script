@@ -1,0 +1,18 @@
+Subject: Application for Full-Stack Developer Opportunity
+
+Dear {companyName} Team,
+
+My name is Henrique Dias, and I am a 19-year-old software engineering student currently pursuing a Bachelor's degree in Computer Engineering at PUC-PR, Brazil. With over four years of experience in web development, I specialize in Laravel, Vue.js, ReactJS, and Symfony, and I have worked on projects like migrating the Millarch.org website to Drupal 10 and building efficient CRUD systems.
+
+As a proactive self-learner, I continuously expand my technical expertise through certifications in advanced Laravel and JavaScript, staying updated with the latest technology trends. I am eager to bring my skills and dedication to your team and contribute to impactful projects.
+
+I have attached my resume for your review and would be thrilled to discuss how I can add value to your team.
+
+Thank you for your time and consideration!
+
+Best regards,  
+Henrique Dias  
+Email: [Your Email Address]  
+Phone: [Your Phone Number]  
+LinkedIn: [Your LinkedIn Profile]  
+Portfolio/GitHub: [Your Portfolio or GitHub Link]
