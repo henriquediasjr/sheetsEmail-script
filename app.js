@@ -1,16 +1,13 @@
-const { google } = require("googleapis"); //Provides access to Google's APIs, such as Google Sheets.
-const nodemailer = require("nodemailer"); //Used to send emails programmatically.
-const fs = require("fs"); //File system module for reading/writing files
-const path = require("path"); //Provides utilities for working with file paths
+const { google } = require("googleapis");
+const nodemailer = require("nodemailer");
+const fs = require("fs");
+const path = require("path");
 require("dotenv").config();
 
-
-
-// Path to your Google Service Account JSON key file
 const KEYFILEPATH = path.join(__dirname, "service-account.json");
 const SCOPES = ["https://www.googleapis.com/auth/spreadsheets.readonly"];
 const SPREADSHEET_ID = process.env.SPREADSHEET_ID;
-const RANGE = "Página1!A:F"; // Adjust the range to match your sheet
+const RANGE = "Teste!A:F";
 
 async function readSheet() {
     const auth = new google.auth.GoogleAuth({
@@ -25,52 +22,78 @@ async function readSheet() {
     });
 
     const rows = response.data.values;
-    if (!rows || rows.length <= 1) { // Check for headers and data
+    if (!rows || rows.length <= 1) {
         console.log("No data found in the sheet.");
         return [];
     }
 
-    // Skip the header row and extract emails from column G (index 6)
-    return rows.slice(1).map(row => row[5]).filter(email => email);
+    return rows.slice(1).map(row => ({
+        name: row[0],
+        email: row[5],
+    })).filter(person => person.email && person.email.includes("@"));
+}
+
+function getEmailTemplate(companyName) {
+    const templatePath = path.join(__dirname, "emailTemplate.txt");
+
+    // Read the template file
+    if (!fs.existsSync(templatePath)) {
+        throw new Error("Email template file not found.");
+    }
+
+    let content = fs.readFileSync(templatePath, "utf8");
+
+    // Ensure companyName is properly replacing the placeholder
+    if (!companyName) {
+        throw new Error("Company name not provided for the email template.");
+    }
+
+    // Replace placeholders with dynamic values
+    content = content.replace(/{companyName}/g, companyName);
+
+    // Separate subject and body (assuming the first line is the subject)
+    const [subject, ...bodyLines] = content.split("\n");
+    const body = bodyLines.join("\n").trim();
+
+    return { subject: subject.replace("Subject: ", "").trim(), body };
 }
 
 
-async function sendEmail(email, subject, text) {
-    if (!email || !email.includes("@")) {
-        console.error(`Invalid email: ${email}`);
+async function sendEmail({ name, email }, companyName) {
+    if (!companyName) {
+        console.error(`Company name is missing for email to ${name} (${email})`);
         return;
     }
 
-    const transporter = nodemailer.createTransport({
-        service: "gmail",
-        auth: {
-            user: process.env.GMAIL_USER,
-            pass: process.env.GMAIL_PASS,
-        },
-    });
+    const { subject, body } = getEmailTemplate(companyName);
 
     const mailOptions = {
         from: process.env.GMAIL_USER,
         to: email,
-        subject: subject,
-        text: text,
+        subject,
+        text: body
+            .replace("[Your Email Address]", process.env.GMAIL_USER)
+            .replace("[Your Phone Number]", process.env.PHONE_NUMBER)
+            .replace("[Your LinkedIn Profile]", process.env.LINKEDIN_PROFILE)
+            .replace("[Your Portfolio or GitHub Link]", process.env.GITHUB),
     };
 
     try {
         await transporter.sendMail(mailOptions);
-        console.log(`Email sent to ${email}`);
+        console.log(`Email sent to ${name} (${email})`);
     } catch (error) {
-        console.error(`Failed to send email to ${email}:`, error);
+        console.error(`Failed to send email to ${name} (${email}):`, error);
     }
 }
 
+
 async function main() {
     try {
-        const emails = await readSheet();
-        console.log("Emails found:", emails);
+        const people = await readSheet();
+        console.log("Recipients found:", people);
 
-        for (const email of emails) {
-            await sendEmail(email, "Hello!", "This is a test email.");
+        for (const person of people) {
+            await sendEmail(person, { companyName });
         }
     } catch (error) {
         console.error("Error:", error);
